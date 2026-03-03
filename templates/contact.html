@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Get in Touch{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold">Contact Us</h1>
+                <p class="lead">We'd love to hear from you</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <h2 class="fw-bold mb-4">Get in Touch</h2>
+                <p class="text-muted mb-4">Have questions about our products or need styling advice? We're here to help!</p>
+
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-map-marker-alt fa-2x text-dark"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6>Visit Us</h6>
+                        <p class="text-muted mb-0">123 Fashion Avenue<br>New York, NY 10001</p>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-phone fa-2x text-dark"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6>Call Us</h6>
+                        <p class="text-muted mb-0">(555) 123-4567</p>
+                        <p class="text-muted">Mon-Sat, 10am-7pm EST</p>
+                    </div>
+                </div>
+
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-envelope fa-2x text-dark"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6>Email Us</h6>
+                        <p class="text-muted mb-0">hello@geraldinesstylehaven.com</p>
+                        <p class="text-muted">support@geraldinesstylehaven.com</p>
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clock fa-2x text-dark"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6>Store Hours</h6>
+                        <p class="text-muted mb-0">Monday - Saturday: 10am - 7pm</p>
+                        <p class="text-muted">Sunday: 12pm - 5pm</p>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h6 class="mb-3">Follow Us</h6>
+                <div class="social-links">
+                    <a href="#" class="btn btn-outline-dark btn-social me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="btn btn-outline-dark btn-social me-2"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="btn btn-outline-dark btn-social me-2"><i class="fab fa-pinterest"></i></a>
+                    <a href="#" class="btn btn-outline-dark btn-social"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-lg-5">
+                        <h3 class="mb-4">Send us a Message</h3>
+                        <form>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Your Name *</label>
+                                    <input type="text" class="form-control form-control-lg" id="name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control form-control-lg" id="email" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control form-control-lg" id="subject">
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Message *</label>
+                                    <textarea class="form-control form-control-lg" id="message" rows="6" required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-dark btn-lg px-5">Send Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-0">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a316bb7d26f%3A0x9e8a5a5a5a5a5a5a!2sFashion%20Ave%2C%20New%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus"
+                            width="100%"
+                            height="450"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Frequently Asked Questions</h2>
+            <p class="text-muted">Quick answers to common questions</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">What is your return policy?</h5>
+                        <p class="card-text text-muted">We offer a 30-day return policy for unworn items with tags attached. Returns are free for exchanges.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">How long does shipping take?</h5>
+                        <p class="card-text text-muted">Standard shipping takes 3-5 business days. Express shipping is available for 1-2 business day delivery.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Do you offer international shipping?</h5>
+                        <p class="card-text text-muted">Yes, we ship worldwide. Shipping costs and delivery times vary by location.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">How can I track my order?</h5>
+                        <p class="card-text text-muted">Once your order ships, you'll receive a tracking number via email to monitor your delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Geraldine's Style Haven{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold">Checkout</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('cart') }}" class="text-decoration-none">Cart</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Checkout Section -->
+<section class="py-5">
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row g-5">
+            <!-- Checkout Form -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="mb-4">Payment Details</h4>
+                        
+                        <form method="POST" action="{{ url_for('checkout') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <!-- Ecocash Payment Method Highlight -->
+                            <div class="alert alert-success mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-mobile-alt fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-1">Pay with Ecocash</h6>
+                                        <p class="mb-0 small">Enter your Ecocash registered phone number to complete payment</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="customer_name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="customer_email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="customer_email" name="customer_email" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="customer_phone" class="form-label">Ecocash Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+263</span>
+                                    <input type="tel" class="form-control" id="customer_phone" name="customer_phone" 
+                                           placeholder="77XXXXXXXX" pattern="[0-9]{9}" required>
+                                </div>
+                                <div class="form-text">Enter your Ecocash registered number (e.g., 771234567)</div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="mb-3">Order Summary</h5>
+                            <div class="bg-light p-3 rounded mb-4">
+                                {% for item in cart_items %}
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                                    <span>${{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                                </div>
+                                {% endfor %}
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total</strong>
+                                    <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-mobile-alt me-2"></i> Pay with Ecocash
+                            </button>
+
+                            <div class="text-center mt-3">
+                                <p class="text-muted small mb-2">You'll receive a prompt on your phone to confirm payment</p>
+                                <img src="https://via.placeholder.com/150x40?text=Ecocash+Secure" alt="Secure Payment" class="img-fluid">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Sidebar -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3">Your Order</h5>
+                        
+                        <div class="mb-3">
+                            {% for item in cart_items %}
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-shrink-0">
+                                    <img src="https://via.placeholder.com/60x80?text={{ item.product.name|urlencode }}" 
+                                         alt="{{ item.product.name }}" class="img-fluid rounded" style="width: 60px;">
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-0">{{ item.product.name }}</h6>
+                                    <small class="text-muted">Qty: {{ item.quantity }}</small>
+                                    {% if item.size %}<small class="text-muted"> | Size: {{ item.size }}</small>{% endif %}
+                                    {% if item.color %}<small class="text-muted"> | Color: {{ item.color }}</small>{% endif %}
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span class="fw-bold">${{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>${{ "%.2f"|format(total) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span class="text-success">Free</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax</span>
+                            <span>$0.00</span>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="h5">Total</span>
+                            <span class="h5 text-success">${{ "%.2f"|format(total) }}</span>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6 class="mb-2">Need Help?</h6>
+                            <p class="small text-muted">Contact us at <a href="tel:+5551234567">(555) 123-4567</a> for payment assistance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Format phone number input
+    document.getElementById('customer_phone').addEventListener('input', function(e) {
+        // Remove any non-numeric characters except the initial digits
+        let value = e.target.value.replace(/\D/g, '');
+        // Limit to 9 digits (for 077XXXXXXX format)
+        if (value.length > 9) {
+            value = value.substring(0, 9);
+        }
+        e.target.value = value;
+    });
+</script>
+{% endblock %}

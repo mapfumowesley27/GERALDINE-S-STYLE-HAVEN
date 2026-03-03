@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Geraldine's Style Haven{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>About Us</h1>
+    <p>Our story of timeless fashion</p>
+</section>
+
+<section class="about-hero">
+    <div class="about-hero-content">
+        <h2>Curating Elegance Since 2015</h2>
+        <p>Geraldine's Style Haven was born from a simple vision: to bring timeless elegance to the modern woman's wardrobe. What started as a small boutique has grown into a destination for discerning fashion lovers seeking quality pieces that transcend seasonal trends.</p>
+    </div>
+</section>
+
+<section class="our-story">
+    <div class="story-grid">
+        <div class="story-image">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600" alt="Our story">
+        </div>
+        <div class="story-content">
+            <h2>Our Story</h2>
+            <p>Founded by Sarah Mitchell, Geraldine's Style Haven represents a commitment to curating the finest fashion pieces from around the world. Each item in our collection is carefully selected for its quality, craftsmanship, and timeless appeal.</p>
+            <p>We believe that true style isn't about following trends—it's about investing in pieces that make you feel confident and elegant for years to come.</p>
+        </div>
+    </div>
+</section>
+
+<section class="team-section">
+    <div class="section-header">
+        <h2>Meet Our Team</h2>
+        <p>The passionate people behind Geraldine's Style Haven</p>
+    </div>
+    <div class="team-grid">
+        {% for owner in owners %}
+        <div class="team-member">
+            <div class="member-image">
+                <img src="{{ url_for('static', filename='images/owners/' + owner.image) }}" alt="{{ owner.name }}">
+            </div>
+            <h3>{{ owner.name }}</h3>
+            <span class="role">{{ owner.role }}</span>
+            <p>{{ owner.story }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="values-section">
+    <div class="section-header">
+        <h2>Our Values</h2>
+    </div>
+    <div class="values-grid">
+        <div class="value-card">
+            <i class="fas fa-gem"></i>
+            <h3>Quality First</h3>
+            <p>We source only the finest materials and work with skilled artisans to create pieces that last.</p>
+        </div>
+        <div class="value-card">
+            <i class="fas fa-heart"></i>
+            <h3>Customer Focus</h3>
+            <p>Your satisfaction is our priority. We're here to help you find the perfect piece.</p>
+        </div>
+        <div class="value-card">
+            <i class="fas fa-leaf"></i>
+            <h3>Sustainability</h3>
+            <p>We believe in responsible fashion and work towards sustainable practices.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

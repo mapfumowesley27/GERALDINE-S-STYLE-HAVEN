@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Our Stories - Behind the Brand{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-5 fw-bold">Our Stories</h1>
+                <p class="lead">The journey, the inspiration, and the people behind GERALDINE'S STYLE HAVEN</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Owner Stories -->
+<section class="py-5">
+    <div class="container">
+        {% for owner in owners %}
+        <div class="row mb-5 {% if loop.index % 2 == 0 %}flex-row-reverse{% endif %} align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/600x400?text={{ owner.name|urlencode }}" class="img-fluid rounded-3 shadow" alt="{{ owner.name }}">
+                    {% if loop.first %}
+                    <div class="position-absolute bottom-0 start-0 bg-white p-3 rounded-3 shadow m-3">
+                        <p class="mb-0 fst-italic">"{{ owner.quote }}"</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <h2 class="display-6 mb-3">{{ owner.name }}'s Story</h2>
+                <p class="lead text-muted mb-4">{{ owner.role }}</p>
+                <div class="story-content">
+                    <p class="mb-3">{{ owner.story }}</p>
+                    <p class="mb-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Brand Timeline -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Our Journey</h2>
+            <p class="text-muted">Key moments in our history</p>
+        </div>
+
+        <div class="timeline">
+            <div class="row g-4">
+                <div class="col-md-6 offset-md-6">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="text-primary mb-2">2020</h5>
+                            <h6 class="mb-3">The Beginning</h6>
+                            <p class="text-muted mb-0">Geraldine opens the first Style Haven boutique in downtown New York.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="text-primary mb-2">2021</h5>
+                            <h6 class="mb-3">Growing Together</h6>
+                            <p class="text-muted mb-0">Marcus joins as co-founder, expanding our collection and reach.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 offset-md-6">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="text-primary mb-2">2022</h5>
+                            <h6 class="mb-3">Sustainable Focus</h6>
+                            <p class="text-muted mb-0">Launched our sustainable fashion initiative, partnering with eco-friendly brands.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="text-primary mb-2">2023</h5>
+                            <h6 class="mb-3">Online Expansion</h6>
+                            <p class="text-muted mb-0">Launched our e-commerce platform to reach customers worldwide.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 offset-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="text-primary mb-2">2024</h5>
+                            <h6 class="mb-3">Community First</h6>
+                            <p class="text-muted mb-0">Celebrating 4 years of style, community, and sustainable fashion.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Photo Gallery -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold">Behind the Scenes</h2>
+            <p class="text-muted">A glimpse into our world</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="img-fluid rounded-3 shadow" alt="Boutique Interior">
+            </div>
+            <div class="col-md-4">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="img-fluid rounded-3 shadow" alt="Fashion Display">
+            </div>
+            <div class="col-md-4">
+                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="img-fluid rounded-3 shadow" alt="Owner at Work">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

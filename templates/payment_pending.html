@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Pending - Geraldine's Style Haven{% endblock %}
+
+{% block content %}
+<!-- Payment Pending Section -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        {% if payment.sandbox %}
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="mb-3">Payment Initiated!</h3>
+                        <p class="text-muted mb-4">
+                            Your order has been placed successfully. In sandbox mode, payment is automatically confirmed.
+                        </p>
+                        {% else %}
+                        <div class="mb-4">
+                            <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <h3 class="mb-3">Payment Pending</h3>
+                        <p class="text-muted mb-4">
+                            Please check your phone for the Ecocash payment prompt. 
+                            Enter your PIN to complete the payment.
+                        </p>
+                        {% endif %}
+
+                        <div class="bg-light p-4 rounded mb-4 text-start">
+                            <h6 class="mb-3">Order Details</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Order Reference:</span>
+                                <strong>{{ order.order_reference }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Amount:</span>
+                                <strong class="text-success">${{ "%.2f"|format(order.total_amount) }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Phone:</span>
+                                <span>+263{{ order.customer_phone }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Transaction ID:</span>
+                                <small>{{ order.transaction_id }}</small>
+                            </div>
+                        </div>
+
+                        {% if payment.sandbox %}
+                        <a href="{{ url_for('payment_complete', order_reference=order.order_reference) }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-check me-2"></i>Complete Order
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('payment_status', order_reference=order.order_reference) }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sync-alt me-2"></i>Check Payment Status
+                        </a>
+                        {% endif %}
+                        
+                        <div class="mt-4">
+                            <a href="{{ url_for('index') }}" class="text-decoration-none">Return to Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Status - Geraldine's Style Haven{% endblock %}
+
+{% block content %}
+<!-- Payment Status Section -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        {% if order.payment_status == 'completed' %}
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="mb-3">Payment Confirmed!</h3>
+                        <p class="text-muted mb-4">
+                            Thank you for your payment. Your order has been confirmed.
+                        </p>
+                        {% else %}
+                        <div class="mb-4">
+                            <div class="spinner-border text-warning" role="status" style="width: 4rem; height: 4rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <h3 class="mb-3">Payment Still Pending</h3>
+                        <p class="text-muted mb-4">
+                            We haven't received your payment yet. Please check your phone and complete the payment.
+                        </p>
+                        <button onclick="location.reload()" class="btn btn-primary">
+                            <i class="fas fa-sync-alt me-2"></i>Check Again
+                        </button>
+                        {% endif %}
+
+                        <div class="bg-light p-4 rounded mb-4 text-start">
+                            <h6 class="mb-3">Order Information</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Order Reference:</span>
+                                <strong>{{ order.order_reference }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Amount:</span>
+                                <strong class="text-success">${{ "%.2f"|format(order.total_amount) }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Status:</span>
+                                <span class="badge bg-{{ 'success' if order.payment_status == 'completed' else 'warning' }}">
+                                    {{ order.payment_status }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-dark">
+                            Return to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,316 @@
+/* Custom Styles for GERALDINE'S STYLE HAVEN */
+
+:root {
+    --primary-color: #1a1a1a;
+    --secondary-color: #f8f9fa;
+    --accent-color: #c7a17a;
+    --text-color: #333;
+    --light-text: #666;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    padding-top: 76px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Navigation */
+.navbar-brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.brand-subtitle {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: var(--light-text);
+}
+
+.nav-link {
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin: 0 0.5rem;
+}
+
+/* Hero Section */
+.hero-section {
+    height: 80vh;
+    min-height: 600px;
+}
+
+.hero-slide {
+    height: 80vh;
+    min-height: 600px;
+    position: relative;
+}
+
+.carousel-item {
+    transition: transform 1s ease-in-out;
+}
+
+/* Product Cards */
+.product-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+}
+
+.product-card .position-relative {
+    overflow: hidden;
+}
+
+.product-card img {
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+
+/* Category Cards */
+.category-card {
+    cursor: pointer;
+    height: 300px;
+}
+
+.category-card img {
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.category-card:hover img {
+    transform: scale(1.1);
+}
+
+.category-overlay {
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3));
+    transition: background 0.3s ease;
+}
+
+.category-card:hover .category-overlay {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5));
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0;
+    font-weight: 500;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.btn-dark {
+    background-color: var(--primary-color);
+}
+
+.btn-dark:hover {
+    background-color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn-social {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Cart Badge */
+.cart-count {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 0;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Footer */
+footer {
+    font-size: 0.9rem;
+}
+
+footer a:hover {
+    color: var(--accent-color) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding-top: 70px;
+    }
+
+    .hero-section,
+    .hero-slide {
+        height: 60vh;
+        min-height: 400px;
+    }
+
+    .display-3 {
+        font-size: 2.5rem;
+    }
+
+    .display-6 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease;
+}
+
+/* Custom Utilities */
+.text-accent {
+    color: var(--accent-color);
+}
+
+.bg-accent {
+    background-color: var(--accent-color);
+}
+
+/* Product Detail Page */
+.product-thumbnails img {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.product-thumbnails img:hover,
+.product-thumbnails img.active {
+    opacity: 1;
+}
+
+/* Quantity Input */
+.input-group input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.input-group input[type="number"]::-webkit-inner-spin-button,
+.input-group input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: var(--primary-color);
+    transform: translateX(-50%);
+}
+
+@media (max-width: 768px) {
+    .timeline::before {
+        left: 0;
+    }
+}
+
+/* Loading Spinner */
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Payment Icons */
+.payment-icons {
+    font-size: 1.5rem;
+    color: #666;
+}
+
+.payment-icons i {
+    transition: color 0.3s ease;
+}
+
+.payment-icons i:hover {
+    color: var(--primary-color);
+}

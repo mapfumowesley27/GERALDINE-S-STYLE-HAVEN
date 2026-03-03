@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Product Details{% endblock %}
+
+{% block content %}
+<!-- Product Detail Section -->
+<section class="py-5 mt-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('products') }}" class="text-decoration-none">Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <!-- Product Image -->
+            <div class="col-md-6">
+                <div class="position-relative">
+                    <img src="https://via.placeholder.com/600x700?text={{ product.name|urlencode }}" class="img-fluid rounded-3 shadow" alt="{{ product.name }}">
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-6">
+                <h1 class="display-6 mb-3">{{ product.name }}</h1>
+                <p class="lead mb-4">${{ "%.2f"|format(product.price) }}</p>
+
+                <div class="mb-4">
+                    <h6 class="mb-2">Description</h6>
+                    <p class="text-muted">{{ product.description }}</p>
+                </div>
+
+                <!-- Size Selection -->
+                <div class="mb-4">
+                    <h6 class="mb-2">Size</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for size in product.get_sizes_list() %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="size" id="size{{ size }}" value="{{ size }}">
+                            <label class="form-check-label" for="size{{ size }}">
+                                {{ size }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Color Selection -->
+                {% if product.get_colors_list() %}
+                <div class="mb-4">
+                    <h6 class="mb-2">Color</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for color in product.get_colors_list() %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="color" id="color{{ color }}" value="{{ color }}">
+                            <label class="form-check-label" for="color{{ color }}">
+                                {{ color }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Quantity -->
+                <div class="mb-4">
+                    <h6 class="mb-2">Quantity</h6>
+                    <div class="input-group" style="width: 150px;">
+                        <button class="btn btn-outline-dark" type="button" onclick="decrementQuantity()">-</button>
+                        <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="10">
+                        <button class="btn btn-outline-dark" type="button" onclick="incrementQuantity()">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex">
+                    <button class="btn btn-dark btn-lg flex-grow-1" onclick="addToCart()">
+                        <i class="fas fa-shopping-bag me-2"></i>Add to Cart
+                    </button>
+                    <button class="btn btn-outline-dark btn-lg">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+
+                <!-- Product Details -->
+                <div class="mt-5">
+                    <ul class="nav nav-tabs" id="productTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">Details</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="shipping-tab" data-bs-toggle="tab" data-bs-target="#shipping" type="button" role="tab">Shipping</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="returns-tab" data-bs-toggle="tab" data-bs-target="#returns" type="button" role="tab">Returns</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3 border border-top-0 rounded-bottom" id="productTabContent">
+                        <div class="tab-pane fade show active" id="details" role="tabpanel">
+                            <ul class="list-unstyled">
+                                <li><strong>Category:</strong> {{ product.category }}</li>
+                                <li><strong>Material:</strong> Premium quality materials</li>
+                                <li><strong>Care:</strong> Dry clean only</li>
+                                <li><strong>Origin:</strong> Made in Italy</li>
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade" id="shipping" role="tabpanel">
+                            <p>Free shipping on orders over $100. Standard shipping takes 3-5 business days. Express shipping available at checkout.</p>
+                        </div>
+                        <div class="tab-pane fade" id="returns" role="tabpanel">
+                            <p>30-day return policy. Items must be unworn with tags attached. Return shipping is free for exchanges.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function incrementQuantity() {
+    let input = document.getElementById('quantity');
+    input.value = parseInt(input.value) + 1;
+}
+
+function decrementQuantity() {
+    let input = document.getElementById('quantity');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function addToCart() {
+    const size = document.querySelector('input[name="size"]:checked')?.value || '';
+    const color = document.querySelector('input[name="color"]:checked')?.value || '';
+    const quantity = document.getElementById('quantity').value;
+
+    fetch('/add-to-cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            product_id: {{ product.id }},
+            quantity: parseInt(quantity),
+            size: size,
+            color: color
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('cartCount').textContent = data.cart_count;
+            alert('Product added to cart!');
+        }
+    });
+}
+</script>
+{% endblock %}
