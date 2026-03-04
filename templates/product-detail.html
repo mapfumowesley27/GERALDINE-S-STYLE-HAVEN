@@ -30,17 +30,17 @@
 
             <!-- Product Info -->
             <div class="col-md-6">
-                <h1 class="display-6 mb-3">{{ product.name }}</h1>
+                <h2 class="fw-bold mb-2">{{ product.name }}</h2>
                 <p class="lead mb-4">${{ "%.2f"|format(product.price) }}</p>
 
                 <div class="mb-4">
-                    <h6 class="mb-2">Description</h6>
+                    <p class="mb-2 fw-bold">Description</p>
                     <p class="text-muted">{{ product.description }}</p>
                 </div>
 
                 <!-- Size Selection -->
                 <div class="mb-4">
-                    <h6 class="mb-2">Size</h6>
+                    <p class="mb-2 fw-bold">Size</p>
                     <div class="d-flex flex-wrap gap-2">
                         {% for size in product.get_sizes_list() %}
                         <div class="form-check">
@@ -56,7 +56,7 @@
                 <!-- Color Selection -->
                 {% if product.get_colors_list() %}
                 <div class="mb-4">
-                    <h6 class="mb-2">Color</h6>
+                    <p class="mb-2 fw-bold">Color</p>
                     <div class="d-flex flex-wrap gap-2">
                         {% for color in product.get_colors_list() %}
                         <div class="form-check">
@@ -72,7 +72,7 @@
 
                 <!-- Quantity -->
                 <div class="mb-4">
-                    <h6 class="mb-2">Quantity</h6>
+                    <p class="mb-2 fw-bold">Quantity</p>
                     <div class="input-group" style="width: 150px;">
                         <button class="btn btn-outline-dark" type="button" onclick="decrementQuantity()">-</button>
                         <input type="number" class="form-control text-center" id="quantity" value="1" min="1" max="10">

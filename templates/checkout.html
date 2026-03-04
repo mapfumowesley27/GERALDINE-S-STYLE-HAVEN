@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
-                <h1 class="display-5 fw-bold">Checkout</h1>
+                <h2 class="fw-bold">Checkout</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
                         <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Home</a></li>
@@ -40,7 +40,7 @@
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <h4 class="mb-4">Payment Details</h4>
+                        <h5 class="mb-3">Payment Details</h5>
                         
                         <form method="POST" action="{{ url_for('checkout') }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -78,7 +78,7 @@
 
                             <hr class="my-4">
 
-                            <h5 class="mb-3">Order Summary</h5>
+                            <h6 class="mb-2">Order Summary</h6>
                             <div class="bg-light p-3 rounded mb-4">
                                 {% for item in cart_items %}
                                 <div class="d-flex justify-content-between mb-2">
@@ -113,7 +113,7 @@
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4">
-                        <h5 class="mb-3">Your Order</h5>
+                        <h6 class="mb-2">Your Order</h6>
                         
                         <div class="mb-3">
                             {% for item in cart_items %}
@@ -165,7 +165,7 @@
                         </div>
 
                         <div class="mt-4">
-                            <h6 class="mb-2">Need Help?</h6>
+                            <p class="mb-2 fw-bold">Need Help?</p>
                             <p class="small text-muted">Contact us at <a href="tel:+5551234567">(555) 123-4567</a> for payment assistance.</p>
                         </div>
                     </div>
