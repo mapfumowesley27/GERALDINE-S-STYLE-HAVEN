@@ -19,7 +19,11 @@
             <div class="col-md-6">
                 <div class="position-relative">
                     {% if product.image %}
-                    <img src="{{ url_for('static', filename=product.image) }}" class="img-fluid rounded-3 shadow" alt="{{ product.name }}" onerror="this.style.display='none'">
+                    <img src="{{ url_for('static', filename=product.image) }}" class="img-fluid rounded-3 shadow" alt="{{ product.name }}" onerror="this.style.display='none';this.outerHTML='<div class=\'bg-light d-flex align-items-center justify-content-center rounded-3\' style=\'min-height:400px;\'><i class=\'fas fa-tshirt text-muted fa-5x\'></i></div>'">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center rounded-3" style="min-height: 400px;">
+                        <i class="fas fa-tshirt text-muted fa-5x"></i>
+                    </div>
                     {% endif %}
                 </div>
             </div>

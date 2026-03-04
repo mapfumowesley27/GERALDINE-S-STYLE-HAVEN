@@ -12,8 +12,8 @@
                     <div class="container h-100">
                         <div class="row h-100 align-items-center">
                             <div class="col-lg-6 text-white">
-                                <h1 class="display-3 fw-bold mb-4">Discover Your Style</h1>
-                                <p class="lead mb-4">Curated collections for the modern individual. Elevate your wardrobe with our premium selection.</p>
+                                <h1 class="display-4 fw-bold mb-3">Discover Your Style</h1>
+                                <p class="lead mb-3">Curated collections for the modern individual. Elevate your wardrobe with our premium selection.</p>
                                 <a href="{{ url_for('products') }}" class="btn btn-light btn-lg px-5 py-3">Shop Now</a>
                             </div>
                         </div>
@@ -25,8 +25,8 @@
                     <div class="container h-100">
                         <div class="row h-100 align-items-center">
                             <div class="col-lg-6 text-white">
-                                <h1 class="display-3 fw-bold mb-4">Summer Collection 2024</h1>
-                                <p class="lead mb-4">Light, breezy, and effortlessly chic. Explore our latest arrivals.</p>
+                                <h1 class="display-4 fw-bold mb-3">Summer Collection 2024</h1>
+                                <p class="lead mb-3">Light, breezy, and effortlessly chic. Explore our latest arrivals.</p>
                                 <a href="{{ url_for('products') }}" class="btn btn-light btn-lg px-5 py-3">Explore</a>
                             </div>
                         </div>
@@ -48,8 +48,8 @@
 <!-- Featured Categories -->
 <section class="py-5">
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Shop by Category</h2>
+        <div class="text-center mb-4">
+            <h2 class="h3 fw-bold">Shop by Category</h2>
             <p class="text-muted">Find exactly what you're looking for</p>
         </div>
         <div class="row g-4">
@@ -90,8 +90,8 @@
 <!-- Featured Products -->
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Featured Products</h2>
+        <div class="text-center mb-4">
+            <h2 class="h3 fw-bold">Featured Products</h2>
             <p class="text-muted">Our most popular items this season</p>
         </div>
         <div class="row g-4">
@@ -99,7 +99,13 @@
             <div class="col-md-6 col-lg-3">
                 <div class="product-card card h-100 border-0 shadow-sm">
                     <div class="position-relative overflow-hidden">
-                        <img src="https://via.placeholder.com/300x400?text={{ product.name|urlencode }}" class="card-img-top" alt="{{ product.name }}">
+                        {% if product.image %}
+                        <img src="{{ url_for('static', filename=product.image) }}" class="card-img-top" alt="{{ product.name }}" onerror="this.style.display='none';this.outerHTML='<div class=\'card-img-top bg-light d-flex align-items-center justify-content-center\' style=\'height:250px;\'><i class=\'fas fa-tshirt text-muted fa-3x\'></i></div>'">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-tshirt text-muted fa-3x"></i>
+                        </div>
+                        {% endif %}
                         <div class="product-overlay">
                             <button class="btn btn-dark btn-sm w-100" onclick="quickView({{ product.id }})">Quick View</button>
                         </div>
@@ -129,7 +135,7 @@
                 <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Boutique Story" class="img-fluid rounded-3 shadow">
             </div>
             <div class="col-lg-6">
-                <h2 class="display-6 fw-bold mb-4">Our Story</h2>
+                <h2 class="h3 fw-bold mb-3">Our Story</h2>
                 <p class="lead mb-4">Founded in 2020, GERALDINE'S STYLE HAVEN began as a dream to bring curated, sustainable fashion to our community.</p>
                 <p class="text-muted mb-4">What started as a small boutique has grown into a destination for fashion lovers who appreciate quality, style, and ethical production. Every piece in our collection is carefully selected to ensure it meets our high standards for design and sustainability.</p>
                 <a href="{{ url_for('about') }}" class="btn btn-dark">Read More About Us</a>
@@ -141,7 +147,7 @@
 <!-- Newsletter Section -->
 <section class="py-5 bg-dark text-white">
     <div class="container text-center">
-        <h2 class="display-6 fw-bold mb-3">Join Our Newsletter</h2>
+        <h2 class="h4 fw-bold mb-2">Join Our Newsletter</h2>
         <p class="lead mb-4">Subscribe to receive updates, access to exclusive deals, and more.</p>
         <div class="row justify-content-center">
             <div class="col-md-6">

@@ -6,11 +6,11 @@
 <style>
     .cart-hero {
         background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
-        padding: 100px 0 80px;
+        padding: 10px 0;
     }
     .cart-hero h1 {
         font-family: 'Playfair Display', serif;
-        font-size: 3.5rem;
+        font-size: 2.5rem;
     }
     .cart-item-card {
         border: none;
@@ -93,10 +93,10 @@
     }
     @media (max-width: 768px) {
         .cart-hero h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
         .cart-item-card img {
-            height: 150px;
+            height: 120px;
         }
     }
 </style>
@@ -108,7 +108,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-3 fw-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Shopping Cart</h1>
+                <h1 class="display-4 fw-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Shopping Cart</h1>
                 <p class="lead text-white-50">Review your items before checkout</p>
             </div>
         </div>
@@ -133,10 +133,16 @@
                 <div class="cart-item-card card shadow-sm mb-4">
                     <div class="row g-0">
                         <div class="col-md-3">
-                            <img src="{{ url_for('static', filename=item.product.image) if item.product.image else 'https://via.placeholder.com/200x300?text=' + item.product.name|urlencode }}" 
+                            {% if item.product.image %}
+                            <img src="{{ url_for('static', filename=item.product.image) }}" 
                                  class="img-fluid w-100" 
                                  alt="{{ item.product.name }}"
-                                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                                 onerror="this.outerHTML='<div class=\'bg-secondary d-flex align-items-center justify-content-center h-100\'><i class=\'fas fa-shirt text-white fa-3x\'></i></div>'">
+                            {% else %}
+                            <div class="bg-secondary d-flex align-items-center justify-content-center h-100">
+                                <i class="fas fa-shirt text-white fa-3x"></i>
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="col-md-9">
                             <div class="card-body p-4">
@@ -167,19 +173,18 @@
                                         <span class="text-muted me-3">Quantity:</span>
                                         <div class="d-flex align-items-center border rounded-pill px-2">
                                             <button class="quantity-btn btn btn-link text-dark p-1" 
-                                                    onclick="updateQuantity({{ item.product.id }}, {{ item.quantity - 1 }}, '{{ item.size }}', '{{ item.color }}')">
+                                                    onclick="updateQuantity({{ item.product.id }}, {{ item.quantity - 1 }}, '{{ item.size }}', '{{ item.color }}', this)">
                                                 <i class="fas fa-minus"></i>
                                             </button>
-                                            <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
+                                            <span class="quantity-display mx-2 fw-bold" id="qty-{{ item.product.id }}-{{ item.size }}-{{ item.color }}">{{ item.quantity }}</span>
                                             <button class="quantity-btn btn btn-link text-dark p-1" 
-                                                    onclick="updateQuantity({{ item.product.id }}, {{ item.quantity + 1 }}, '{{ item.size }}', '{{ item.color }}')">
+                                                    onclick="updateQuantity({{ item.product.id }}, {{ item.quantity + 1 }}, '{{ item.size }}', '{{ item.color }}', this)">
                                                 <i class="fas fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
                                     <div class="text-end">
-                                        <span class="text-muted text-decoration-line-through small">${{ "%.2f"|format(item.product.price * (item.quantity + 1)) if item.quantity < item.product.price else "" }}</span>
-                                        <h4 class="fw-bold text-primary mb-0">${{ "%.2f"|format(item.product.price * item.quantity) }}</h4>
+                                        <h4 class="fw-bold text-primary mb-0 item-total" id="total-{{ item.product.id }}-{{ item.size }}-{{ item.color }}">${{ "%.2f"|format(item.product.price * item.quantity) }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -203,8 +208,8 @@
                         <h4 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;">Order Summary</h4>
                         
                         <div class="summary-row d-flex justify-content-between">
-                            <span class="text-muted">Subtotal ({{ cart_items|length }} items)</span>
-                            <span class="fw-semibold">${{ "%.2f"|format(total) }}</span>
+                            <span class="text-muted">Subtotal (<span id="itemCount">{{ cart_items|length }}</span> items)</span>
+                            <span class="fw-semibold" id="cartSubtotal">${{ "%.2f"|format(total) }}</span>
                         </div>
                         
                         <div class="summary-row d-flex justify-content-between">
@@ -230,7 +235,7 @@
 
                         <div class="d-flex justify-content-between mb-4">
                             <span class="h5 fw-bold">Total</span>
-                            <span class="h4 fw-bold text-primary">${{ "%.2f"|format(total) }}</span>
+                            <span class="h4 fw-bold text-primary" id="cartTotal">${{ "%.2f"|format(total) }}</span>
                         </div>
 
                         <!-- Payment Methods -->
@@ -297,7 +302,9 @@
         <div class="row g-3">
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-sm h-100">
-                    <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300" class="card-img-top" alt="Accessory" onerror="this.src='https://via.placeholder.com/300x200?text=Silk+Scarf'">
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                        <i class="fas fa-gift text-muted fa-3x"></i>
+                    </div>
                     <div class="card-body text-center">
                         <h6 class="mb-1">Silk Scarf</h6>
                         <p class="text-primary fw-bold">$45.00</p>
@@ -306,7 +313,9 @@
             </div>
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-sm h-100">
-                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300" class="card-img-top" alt="Watch" onerror="this.src='https://via.placeholder.com/300x200?text=Classic+Watch'">
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                        <i class="fas fa-clock text-muted fa-3x"></i>
+                    </div>
                     <div class="card-body text-center">
                         <h6 class="mb-1">Classic Watch</h6>
                         <p class="text-primary fw-bold">$199.00</p>
@@ -315,7 +324,9 @@
             </div>
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-sm h-100">
-                    <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300" class="card-img-top" alt="Sunglasses" onerror="this.src='https://via.placeholder.com/300x200?text=Sunglasses'">
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                        <i class="fas fa-glasses text-muted fa-3x"></i>
+                    </div>
                     <div class="card-body text-center">
                         <h6 class="mb-1">Sunglasses</h6>
                         <p class="text-primary fw-bold">$89.00</p>
@@ -324,7 +335,9 @@
             </div>
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-sm h-100">
-                    <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=300" class="card-img-top" alt="Belt" onerror="this.src='https://via.placeholder.com/300x200?text=Leather+Belt'">
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                        <i class="fas fa-ribbon text-muted fa-3x"></i>
+                    </div>
                     <div class="card-body text-center">
                         <h6 class="mb-1">Leather Belt</h6>
                         <p class="text-primary fw-bold">$65.00</p>
@@ -339,11 +352,26 @@
 
 {% block scripts %}
 <script>
-function updateQuantity(productId, newQuantity, size, color) {
+function updateQuantity(productId, newQuantity, size, color, btn) {
     if (newQuantity < 1) {
-        removeItem(productId, size, color);
+        // Find the parent card and animate removal
+        const card = btn.closest('.cart-item-card');
+        card.style.transition = 'all 0.3s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(100px)';
+        
+        setTimeout(() => {
+            removeItem(productId, size, color);
+        }, 300);
         return;
     }
+
+    // Get the quantity display element
+    const qtyKey = `${productId}-${size}-${color}`;
+    const qtyEl = document.getElementById(`qty-${qtyKey}`);
+    const totalEl = document.getElementById(`total-${qtyKey}`);
+    
+    if (qtyEl) qtyEl.textContent = newQuantity;
 
     fetch('/update-cart', {
         method: 'POST',
@@ -361,8 +389,31 @@ function updateQuantity(productId, newQuantity, size, color) {
     .then(data => {
         if (data.success) {
             document.getElementById('cartCount').textContent = data.cart_count;
-            location.reload();
+            
+            // Fetch updated total
+            fetch('/cart-data', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(res => res.json())
+            .then(cartData => {
+                if (totalEl) {
+                    totalEl.textContent = '$' + cartData.total.toFixed(2);
+                }
+                document.getElementById('cartSubtotal').textContent = '$' + cartData.total.toFixed(2);
+                document.getElementById('cartTotal').textContent = '$' + cartData.total.toFixed(2);
+            })
+            .catch(err => {
+                console.error('Error fetching cart data:', err);
+            });
         }
+    })
+    .catch(error => {
+        console.error('Error updating quantity:', error);
+        // Reload on error to ensure consistency
+        location.reload();
     });
 }
 
@@ -382,6 +433,8 @@ function removeItem(productId, size, color) {
     .then(data => {
         if (data.success) {
             document.getElementById('cartCount').textContent = data.cart_count;
+            
+            // Reload to update cart properly
             location.reload();
         }
     });

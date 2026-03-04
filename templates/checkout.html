@@ -99,7 +99,10 @@
 
                             <div class="text-center mt-3">
                                 <p class="text-muted small mb-2">You'll receive a prompt on your phone to confirm payment</p>
-                                <img src="https://via.placeholder.com/150x40?text=Ecocash+Secure" alt="Secure Payment" class="img-fluid">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                <i class="fas fa-shield-alt text-success fa-lg"></i>
+                                <span class="text-muted small">Secure Payment via Ecocash</span>
+                            </div>
                             </div>
                         </form>
                     </div>
@@ -116,8 +119,15 @@
                             {% for item in cart_items %}
                             <div class="d-flex align-items-center mb-3">
                                 <div class="flex-shrink-0">
-                                    <img src="https://via.placeholder.com/60x80?text={{ item.product.name|urlencode }}" 
-                                         alt="{{ item.product.name }}" class="img-fluid rounded" style="width: 60px;">
+                                    {% if item.product.image %}
+                                    <img src="{{ url_for('static', filename=item.product.image) }}" 
+                                         alt="{{ item.product.name }}" class="img-fluid rounded" style="width: 60px; height: 80px; object-fit: cover;"
+                                         onerror="this.outerHTML='<div class=\'bg-secondary rounded d-flex align-items-center justify-content-center\' style=\'width:60px;height:80px;\'><i class=\'fas fa-shirt text-white\'></i></div>'">
+                                {% else %}
+                                    <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 80px;">
+                                        <i class="fas fa-shirt text-white"></i>
+                                    </div>
+                                {% endif %}
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h6 class="mb-0">{{ item.product.name }}</h6>

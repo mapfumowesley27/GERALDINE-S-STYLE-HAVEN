@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import json
 import uuid
@@ -20,6 +21,9 @@ EMAIL_PATTERN = r'^[\w\.-]+@[\w\.-]+\.\w+$'
 # Create Flask application
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'geraldine-style-haven-secret-key')
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent XSS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/images'
@@ -94,6 +98,41 @@ class Order(db.Model):
 
     def get_items_list(self):
         return json.loads(self.items) if self.items else []
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    full_name = db.Column(db.String(100))
+    is_admin = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+# Helper function to check if user is logged in
+def is_admin_logged_in():
+    return session.get('admin_logged_in') and session.get('admin_id')
+
+
+# Decorator for admin-only routes
+def admin_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not is_admin_logged_in():
+            flash('Please log in to access the admin panel.', 'warning')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # Routes
@@ -240,6 +279,23 @@ def remove_from_cart():
     return jsonify({'success': True, 'cart_count': len(cart)})
 
 
+@app.route('/cart-data', methods=['GET'])
+def cart_data():
+    """Return cart data as JSON for AJAX updates"""
+    cart = session.get('cart', [])
+    total = 0
+    
+    for item in cart:
+        product = Product.query.get(item['product_id'])
+        if product:
+            total += product.price * item['quantity']
+    
+    return jsonify({
+        'total': total,
+        'item_count': len(cart)
+    })
+
+
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     cart = session.get('cart', [])
@@ -365,7 +421,92 @@ def payment_complete(order_reference):
     return render_template('order_confirmation.html', order=order)
 
 # Admin Routes
+# Hardcoded admin access key
+ADMIN_ACCESS_KEY = "family6"
+
+
+@app.route('/verify-key', methods=['GET', 'POST'])
+def verify_key():
+    """Verify admin access key before showing login page"""
+    # If already logged in, redirect to admin
+    if is_admin_logged_in():
+        return redirect(url_for('admin'))
+    
+    if request.method == 'POST':
+        key = request.form.get('access_key', '').strip()
+        
+        if key == ADMIN_ACCESS_KEY:
+            session['key_verified'] = True
+            session.modified = True
+            return redirect(url_for('login'))
+        else:
+            flash('Invalid access key. Please try again.', 'danger')
+    
+    # Clear any previous key verification
+    session.pop('key_verified', None)
+    return render_template('verify_key.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    # Check if key was verified first
+    if not session.get('key_verified'):
+        flash('Please verify your access key first.', 'warning')
+        return redirect(url_for('verify_key'))
+    
+    if is_admin_logged_in():
+        return redirect(url_for('admin'))
+    
+    # Clear any previous login attempt data
+    session.pop('login_error', None)
+    
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        
+        if not username or not password:
+            flash('Please enter both username and password.', 'danger')
+            return render_template('login.html', username='')
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password) and user.is_admin and user.is_active:
+            # Update last login
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            
+            # Set session
+            session['admin_logged_in'] = True
+            session['admin_id'] = user.id
+            session['admin_name'] = user.full_name or user.username
+            session.modified = True
+            
+            # Clear key verification after successful login
+            session.pop('key_verified', None)
+            
+            flash(f'Welcome back, {user.full_name or user.username}!', 'success')
+            return redirect(url_for('admin'))
+        else:
+            flash('Invalid username or password.', 'danger')
+            # Return with empty username to clear the field
+            return render_template('login.html', username='')
+    
+    return render_template('login.html', username='')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('admin_logged_in', None)
+    session.pop('admin_id', None)
+    session.pop('admin_name', None)
+    session.pop('key_verified', None)
+    session.modified = True
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('index'))
+
+
 @app.route('/admin')
+@admin_required
 def admin():
     search_query = request.args.get('search', '')
     if search_query:
@@ -417,6 +558,7 @@ def admin():
                           total_value=total_value)
 
 @app.route('/admin/add-product', methods=['GET', 'POST'])
+@admin_required
 def add_product():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -464,6 +606,7 @@ def add_product():
     return render_template('admin_add_product.html')
 
 @app.route('/admin/edit-product/<int:product_id>', methods=['GET', 'POST'])
+@admin_required
 def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     
@@ -502,6 +645,7 @@ def edit_product(product_id):
     return render_template('admin_edit_product.html', product=product)
 
 @app.route('/admin/delete-product/<int:product_id>')
+@admin_required
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
@@ -511,6 +655,7 @@ def delete_product(product_id):
     return redirect(url_for('admin'))
 
 @app.route('/admin/toggle-stock/<int:product_id>')
+@admin_required
 def toggle_stock(product_id):
     product = Product.query.get_or_404(product_id)
     product.in_stock = not product.in_stock
@@ -519,6 +664,47 @@ def toggle_stock(product_id):
     status = 'in stock' if product.in_stock else 'out of stock'
     flash(f'Product marked as {status}!', 'success')
     return redirect(url_for('admin'))
+
+
+@app.route('/create-admin', methods=['GET', 'POST'])
+def create_admin():
+    """Create admin user - FOR INITIAL SETUP ONLY"""
+    # Check if admin already exists
+    existing_admin = User.query.filter_by(is_admin=True).first()
+    if existing_admin:
+        return jsonify({'message': 'Admin user already exists. Please use the login page.'})
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        full_name = request.form.get('full_name')
+        
+        if not username or not email or not password:
+            flash('Please fill in all required fields.', 'danger')
+            return render_template('create_admin.html')
+        
+        # Validate password strength
+        if len(password) < 6:
+            flash('Password must be at least 6 characters long.', 'danger')
+            return render_template('create_admin.html')
+        
+        user = User(
+            username=username,
+            email=email,
+            full_name=full_name,
+            is_admin=True,
+            is_active=True
+        )
+        user.set_password(password)
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        flash('Admin account created successfully! You can now log in.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('create_admin.html')
 
 
 @app.route('/init-db')
