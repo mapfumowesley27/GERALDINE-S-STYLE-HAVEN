@@ -2,14 +2,128 @@
 
 {% block title %}Our Stories - Behind the Brand{% endblock %}
 
+{% block extra_css %}
+<style>
+    .stories-hero {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+        padding: 100px 0 80px;
+        position: relative;
+    }
+    .stories-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+    }
+    .story-card-horizontal {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .story-card-horizontal:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .story-card-horizontal img {
+        height: 300px;
+        object-fit: cover;
+    }
+    .story-card-horizontal .card-body {
+        padding: 2rem;
+    }
+    .story-card-horizontal:hover img {
+        transform: scale(1.05);
+    }
+    .story-card-horizontal img {
+        transition: transform 0.5s ease;
+    }
+    .quote-card {
+        border-left: 4px solid #c7a17a;
+        background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    }
+    .timeline-item {
+        position: relative;
+        padding-left: 60px;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #c7a17a, #e4e8ec);
+    }
+    .timeline-dot {
+        position: absolute;
+        left: 10px;
+        top: 0;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #c7a17a;
+        border: 4px solid #fff;
+        box-shadow: 0 0 0 3px #c7a17a;
+    }
+    .timeline-card {
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+    .timeline-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .gallery-item {
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+    }
+    .gallery-item img {
+        transition: transform 0.5s ease;
+    }
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+    .gallery-item::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.3);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .gallery-item:hover::after {
+        opacity: 1;
+    }
+    .milestone-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #c7a17a;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    @media (max-width: 768px) {
+        .stories-hero h1 {
+            font-size: 2.5rem;
+        }
+        .story-card-horizontal img {
+            height: 200px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Page Header -->
-<section class="bg-light py-5 mt-5">
+<!-- Hero Section -->
+<section class="stories-hero">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="display-5 fw-bold">Our Stories</h1>
-                <p class="lead">The journey, the inspiration, and the people behind GERALDINE'S STYLE HAVEN</p>
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-3 fw-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Our Stories</h1>
+                <p class="lead text-white-50">The journey, the inspiration, and the people behind Geraldine's Style Haven</p>
             </div>
         </div>
     </div>
@@ -18,25 +132,28 @@
 <!-- Owner Stories -->
 <section class="py-5">
     <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-uppercase text-secondary letter-spacing-2 fw-bold">The Visionaries</span>
+            <h2 class="display-5 fw-bold mt-2" style="font-family: 'Playfair Display', serif;">Behind the Brand</h2>
+        </div>
+        
         {% for owner in owners %}
-        <div class="row mb-5 {% if loop.index % 2 == 0 %}flex-row-reverse{% endif %} align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <div class="position-relative">
-                    <img src="https://via.placeholder.com/600x400?text={{ owner.name|urlencode }}" class="img-fluid rounded-3 shadow" alt="{{ owner.name }}">
-                    {% if loop.first %}
-                    <div class="position-absolute bottom-0 start-0 bg-white p-3 rounded-3 shadow m-3">
-                        <p class="mb-0 fst-italic">"{{ owner.quote }}"</p>
-                    </div>
-                    {% endif %}
+        <div class="story-card-horizontal card shadow-sm mb-5">
+            <div class="row g-0">
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='images/owners/' + owner.image) }}" class="img-fluid w-100" alt="{{ owner.name }}" onerror="this.src='https://via.placeholder.com/600x400?text=Owner+Story'">
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <h2 class="display-6 mb-3">{{ owner.name }}'s Story</h2>
-                <p class="lead text-muted mb-4">{{ owner.role }}</p>
-                <div class="story-content">
-                    <p class="mb-3">{{ owner.story }}</p>
-                    <p class="mb-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
-                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <div class="col-lg-6">
+                    <div class="card-body d-flex flex-column justify-content-center h-100">
+                        <span class="text-uppercase text-secondary letter-spacing-2 fw-bold" style="font-size: 0.75rem;">{{ owner.role }}</span>
+                        <h3 class="display-6 fw-bold mb-3" style="font-family: 'Playfair Display', serif;">{{ owner.name }}</h3>
+                        <p class="text-muted mb-4">{{ owner.story }}</p>
+                        {% if owner.quote %}
+                        <div class="quote-card p-4 rounded">
+                            <p class="fst-italic mb-0"><i class="fas fa-quote-left text-secondary me-2"></i>{{ owner.quote }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,54 +165,73 @@
 <section class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Our Journey</h2>
-            <p class="text-muted">Key moments in our history</p>
+            <span class="text-uppercase text-secondary letter-spacing-2 fw-bold">Our Journey</span>
+            <h2 class="display-5 fw-bold mt-2" style="font-family: 'Playfair Display', serif;">Key Milestones</h2>
+            <p class="text-muted">The moments that shaped who we are today</p>
         </div>
 
-        <div class="timeline">
-            <div class="row g-4">
-                <div class="col-md-6 offset-md-6">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="text-primary mb-2">2020</h5>
-                            <h6 class="mb-3">The Beginning</h6>
-                            <p class="text-muted mb-0">Geraldine opens the first Style Haven boutique in downtown New York.</p>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="timeline">
+                    <!-- 2020 -->
+                    <div class="timeline-item mb-4">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card card shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-primary">2020</span>
+                                </div>
+                                <h5 class="fw-bold mb-2">The Beginning</h5>
+                                <p class="text-muted mb-0">Geraldine opens the first Style Haven boutique in downtown New York, starting with a curated selection of 50 premium pieces.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="text-primary mb-2">2021</h5>
-                            <h6 class="mb-3">Growing Together</h6>
-                            <p class="text-muted mb-0">Marcus joins as co-founder, expanding our collection and reach.</p>
+
+                    <!-- 2021 -->
+                    <div class="timeline-item mb-4">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card card shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-success mb-2">2021</span>
+                                <h5 class="fw-bold mb-2">Growing Together</h5>
+                                <p class="text-muted mb-0">Marcus joins as co-founder, expanding our collection to include menswear and unisex lines, doubling our product range.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 offset-md-6">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="text-primary mb-2">2022</h5>
-                            <h6 class="mb-3">Sustainable Focus</h6>
-                            <p class="text-muted mb-0">Launched our sustainable fashion initiative, partnering with eco-friendly brands.</p>
+
+                    <!-- 2022 -->
+                    <div class="timeline-item mb-4">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card card shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-warning mb-2">2022</span>
+                                <h5 class="fw-bold mb-2">Sustainable Focus</h5>
+                                <p class="text-muted mb-0">Launched our sustainable fashion initiative, partnering with eco-friendly brands and introducing recycled materials.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="text-primary mb-2">2023</h5>
-                            <h6 class="mb-3">Online Expansion</h6>
-                            <p class="text-muted mb-0">Launched our e-commerce platform to reach customers worldwide.</p>
+
+                    <!-- 2023 -->
+                    <div class="timeline-item mb-4">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card card shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-info mb-2">2023</span>
+                                <h5 class="fw-bold mb-2">Online Expansion</h5>
+                                <p class="text-muted mb-0">Launched our e-commerce platform to reach customers worldwide, shipping to over 50 countries.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 offset-md-6">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="text-primary mb-2">2024</h5>
-                            <h6 class="mb-3">Community First</h6>
-                            <p class="text-muted mb-0">Celebrating 4 years of style, community, and sustainable fashion.</p>
+
+                    <!-- 2024 -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card card shadow-sm">
+                            <div class="card-body">
+                                <span class="badge bg-dark mb-2">2024</span>
+                                <h5 class="fw-bold mb-2">Community First</h5>
+                                <p class="text-muted mb-0">Celebrating 4 years of style, community, and sustainable fashion. Over 5,000 happy customers worldwide.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,19 +244,56 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Behind the Scenes</h2>
-            <p class="text-muted">A glimpse into our world</p>
+            <span class="text-uppercase text-secondary letter-spacing-2 fw-bold">Behind the Scenes</span>
+            <h2 class="display-5 fw-bold mt-2" style="font-family: 'Playfair Display', serif;">A Glimpse Into Our World</h2>
+            <p class="text-muted">Moments that define our brand</p>
         </div>
 
         <div class="row g-4">
-            <div class="col-md-4">
-                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="img-fluid rounded-3 shadow" alt="Boutique Interior">
+            <div class="col-md-6 col-lg-4">
+                <div class="gallery-item shadow">
+                    <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&w=600" class="img-fluid w-100" alt="Boutique Interior" style="height: 250px; object-fit: cover;">
+                </div>
             </div>
-            <div class="col-md-4">
-                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="img-fluid rounded-3 shadow" alt="Fashion Display">
+            <div class="col-md-6 col-lg-4">
+                <div class="gallery-item shadow">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-4.0.3&w=600" class="img-fluid w-100" alt="Fashion Display" style="height: 250px; object-fit: cover;">
+                </div>
             </div>
-            <div class="col-md-4">
-                <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="img-fluid rounded-3 shadow" alt="Owner at Work">
+            <div class="col-md-6 col-lg-4">
+                <div class="gallery-item shadow">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&w=600" class="img-fluid w-100" alt="Style Consultation" style="height: 250px; object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="gallery-item shadow">
+                    <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?ixlib=rb-4.0.3&w=600" class="img-fluid w-100" alt="Fashion Event" style="height: 250px; object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="gallery-item shadow">
+                    <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&w=600" class="img-fluid w-100" alt="Collection Preview" style="height: 250px; object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="gallery-item shadow">
+                    <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&w=600" class="img-fluid w-100" alt="Customer Experience" style="height: 250px; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold text-white mb-2">Be Part of Our Story</h2>
+                <p class="text-white-50 mb-0">Join our community and discover your unique style</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <a href="{{ url_for('contact') }}" class="btn btn-light btn-lg">Contact Us</a>
             </div>
         </div>
     </div>

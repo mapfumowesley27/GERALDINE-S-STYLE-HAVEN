@@ -86,9 +86,16 @@
                 <div class="row g-4">
                     {% for product in products %}
                     <div class="col-md-6 col-lg-4">
-                        <div class="product-card card h-100 border-0 shadow-sm">
+                        <div class="product-card card h-100 border-0 shadow-sm {% if not product.in_stock %}opacity-75{% endif %}">
                             <div class="position-relative overflow-hidden">
-                                <img src="https://via.placeholder.com/300x400?text={{ product.name|urlencode }}" class="card-img-top" alt="{{ product.name }}">
+                                {% if product.image %}
+                                <img src="{{ url_for('static', filename=product.image) }}" class="card-img-top" alt="{{ product.name }}" onerror="this.style.display='none'">
+                                {% endif %}
+                                {% if not product.in_stock %}
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-danger">Out of Stock</span>
+                                </div>
+                                {% endif %}
                                 <div class="product-overlay">
                                     <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-dark btn-sm w-100">View Details</a>
                                 </div>
@@ -96,9 +103,15 @@
                             <div class="card-body text-center">
                                 <h6 class="card-title mb-2">{{ product.name }}</h6>
                                 <p class="text-muted mb-2">${{ "%.2f"|format(product.price) }}</p>
+                                {% if product.in_stock %}
                                 <button class="btn btn-outline-dark btn-sm w-100" onclick="addToCart({{ product.id }})">
                                     <i class="fas fa-shopping-bag me-2"></i>Add to Cart
                                 </button>
+                                {% else %}
+                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                    <i class="fas fa-times-circle me-2"></i>Out of Stock
+                                </button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -141,7 +154,13 @@ function addToCart(productId) {
         if (data.success) {
             document.getElementById('cartCount').textContent = data.cart_count;
             alert('Product added to cart!');
+        } else {
+            alert(data.message || 'Failed to add product to cart');
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
     });
 }
 </script>

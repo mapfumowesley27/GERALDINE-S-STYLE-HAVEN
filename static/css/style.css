@@ -190,8 +190,45 @@ footer {
     font-size: 0.9rem;
 }
 
+footer h5, footer h6 {
+    color: #fff !important;
+}
+
+footer p, footer li, footer span {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+footer .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.85) !important;
+    transition: color 0.3s ease;
+}
+
 footer a:hover {
     color: var(--accent-color) !important;
+}
+
+footer hr {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+footer .form-control {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+}
+
+footer .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+footer .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: var(--accent-color) !important;
+    color: #fff !important;
 }
 
 /* Responsive Design */

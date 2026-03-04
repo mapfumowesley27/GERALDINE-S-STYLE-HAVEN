@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
@@ -56,6 +57,11 @@
                             <span class="cart-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" id="cartCount">
                                 0
                             </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin') }}" title="Admin Panel">
+                            <i class="fas fa-cog"></i>
                         </a>
                     </li>
                 </ul>
@@ -114,7 +120,13 @@
                     <p class="text-muted mb-0">&copy; 2024 GERALDINE'S STYLE HAVEN. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <img src="https://via.placeholder.com/200x30?text=Payment+Methods" alt="Payment Methods" class="img-fluid">
+                    <div class="d-flex align-items-center justify-content-md-end gap-2">
+                        <span class="text-muted me-2">Payment Methods:</span>
+                        <i class="fab fa-cc-visa fa-2x text-light me-2" title="Visa"></i>
+                        <i class="fab fa-cc-mastercard fa-2x text-light me-2" title="Mastercard"></i>
+                        <i class="fab fa-cc-amex fa-2x text-light me-2" title="American Express"></i>
+                        <img src="https://t3n9sm.c2.acecdn.net/wp-content/uploads/ecocash-logo1.png" alt="Ecocash" style="height: 28px; width: auto;" class="me-2" title="Ecocash">
+                    </div>
                 </div>
             </div>
         </div>

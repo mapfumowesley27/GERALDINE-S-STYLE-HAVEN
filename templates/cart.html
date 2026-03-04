@@ -2,19 +2,114 @@
 
 {% block title %}Shopping Cart{% endblock %}
 
+{% block extra_css %}
+<style>
+    .cart-hero {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+        padding: 100px 0 80px;
+    }
+    .cart-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+    }
+    .cart-item-card {
+        border: none;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .cart-item-card:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .cart-item-card img {
+        height: 180px;
+        object-fit: cover;
+    }
+    .quantity-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .quantity-btn:hover {
+        background: #c7a17a;
+        color: white;
+        border-color: #c7a17a;
+    }
+    .quantity-input {
+        width: 50px;
+        text-align: center;
+        border: none;
+        background: transparent;
+        font-weight: 600;
+    }
+    .quantity-input:focus {
+        outline: none;
+    }
+    .summary-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 100px;
+    }
+    .summary-row {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .summary-row:last-child {
+        border-bottom: none;
+    }
+    .payment-method-card {
+        border: 2px solid #e4e8ec;
+        border-radius: 12px;
+        padding: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .payment-method-card:hover {
+        border-color: #c7a17a;
+    }
+    .payment-method-card.selected {
+        border-color: #c7a17a;
+        background: rgba(199, 161, 122, 0.05);
+    }
+    .empty-cart-icon {
+        font-size: 5rem;
+        color: #dee2e6;
+    }
+    .remove-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    .remove-btn:hover {
+        background: #dc3545;
+        color: white;
+    }
+    @media (max-width: 768px) {
+        .cart-hero h1 {
+            font-size: 2.5rem;
+        }
+        .cart-item-card img {
+            height: 150px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Page Header -->
-<section class="bg-light py-5 mt-5">
+<!-- Hero Section -->
+<section class="cart-hero">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="display-5 fw-bold">Shopping Cart</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Cart</li>
-                    </ol>
-                </nav>
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-3 fw-bold text-white mb-4" style="font-family: 'Playfair Display', serif;">Shopping Cart</h1>
+                <p class="lead text-white-50">Review your items before checkout</p>
             </div>
         </div>
     </div>
@@ -27,88 +122,149 @@
         <div class="row g-5">
             <!-- Cart Items -->
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4">
-                        {% for item in cart_items %}
-                        <div class="row align-items-center mb-4 pb-3 border-bottom cart-item" data-product-id="{{ item.product.id }}" data-size="{{ item.size }}" data-color="{{ item.color }}">
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <img src="https://via.placeholder.com/150x200?text={{ item.product.name|urlencode }}" class="img-fluid rounded-3" alt="{{ item.product.name }}">
-                            </div>
-                            <div class="col-md-5">
-                                <h6 class="mb-2">{{ item.product.name }}</h6>
-                                <p class="text-muted small mb-2">${{ "%.2f"|format(item.product.price) }}</p>
-                                {% if item.size %}
-                                <p class="text-muted small mb-1">Size: {{ item.size }}</p>
-                                {% endif %}
-                                {% if item.color %}
-                                <p class="text-muted small mb-0">Color: {{ item.color }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-2">
-                                <div class="input-group input-group-sm">
-                                    <button class="btn btn-outline-dark" type="button" onclick="updateQuantity({{ item.product.id }}, {{ item.quantity - 1 }}, '{{ item.size }}', '{{ item.color }}')">-</button>
-                                    <input type="number" class="form-control text-center quantity-input" value="{{ item.quantity }}" min="1" max="10" readonly>
-                                    <button class="btn btn-outline-dark" type="button" onclick="updateQuantity({{ item.product.id }}, {{ item.quantity + 1 }}, '{{ item.size }}', '{{ item.color }}')">+</button>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Your Items ({{ cart_items|length }})</h4>
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-dark">
+                        <i class="fas fa-plus me-2"></i>Add More
+                    </a>
+                </div>
+
+                {% for item in cart_items %}
+                <div class="cart-item-card card shadow-sm mb-4">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            <img src="{{ url_for('static', filename=item.product.image) if item.product.image else 'https://via.placeholder.com/200x300?text=' + item.product.name|urlencode }}" 
+                                 class="img-fluid w-100" 
+                                 alt="{{ item.product.name }}"
+                                 onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">{{ item.product.name }}</h5>
+                                        <p class="text-muted mb-2">${{ "%.2f"|format(item.product.price) }} each</p>
+                                        {% if item.size %}
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary me-2">
+                                            <i class="fas fa-ruler me-1"></i>Size: {{ item.size }}
+                                        </span>
+                                        {% endif %}
+                                        {% if item.color %}
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                            <i class="fas fa-palette me-1"></i>Color: {{ item.color }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <button class="remove-btn btn btn-outline-danger" 
+                                            onclick="removeItem({{ item.product.id }}, '{{ item.size }}', '{{ item.color }}')"
+                                            title="Remove item">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <div class="d-flex align-items-center">
+                                        <span class="text-muted me-3">Quantity:</span>
+                                        <div class="d-flex align-items-center border rounded-pill px-2">
+                                            <button class="quantity-btn btn btn-link text-dark p-1" 
+                                                    onclick="updateQuantity({{ item.product.id }}, {{ item.quantity - 1 }}, '{{ item.size }}', '{{ item.color }}')">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
+                                            <button class="quantity-btn btn btn-link text-dark p-1" 
+                                                    onclick="updateQuantity({{ item.product.id }}, {{ item.quantity + 1 }}, '{{ item.size }}', '{{ item.color }}')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="text-muted text-decoration-line-through small">${{ "%.2f"|format(item.product.price * (item.quantity + 1)) if item.quantity < item.product.price else "" }}</span>
+                                        <h4 class="fw-bold text-primary mb-0">${{ "%.2f"|format(item.product.price * item.quantity) }}</h4>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-2 text-end">
-                                <p class="fw-bold mb-2">${{ "%.2f"|format(item.product.price * item.quantity) }}</p>
-                                <button class="btn btn-link text-danger p-0" onclick="removeItem({{ item.product.id }}, '{{ item.size }}', '{{ item.color }}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
                         </div>
-                        {% endfor %}
                     </div>
+                </div>
+                {% endfor %}
+
+                <!-- Continue Shopping -->
+                <div class="text-start mt-3">
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-dark">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
                 </div>
             </div>
 
             <!-- Order Summary -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm">
+                <div class="summary-card card">
                     <div class="card-body p-4">
-                        <h5 class="card-title mb-4">Order Summary</h5>
-
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Subtotal</span>
-                            <span class="fw-bold">${{ "%.2f"|format(total) }}</span>
+                        <h4 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;">Order Summary</h4>
+                        
+                        <div class="summary-row d-flex justify-content-between">
+                            <span class="text-muted">Subtotal ({{ cart_items|length }} items)</span>
+                            <span class="fw-semibold">${{ "%.2f"|format(total) }}</span>
                         </div>
-
-                        <div class="d-flex justify-content-between mb-3">
+                        
+                        <div class="summary-row d-flex justify-content-between">
                             <span class="text-muted">Shipping</span>
-                            <span class="fw-bold">Free</span>
+                            <span class="fw-semibold text-success">Free</span>
+                        </div>
+                        
+                        <div class="summary-row d-flex justify-content-between">
+                            <span class="text-muted">Estimated Tax</span>
+                            <span class="fw-semibold">$0.00</span>
                         </div>
 
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="text-muted">Tax</span>
-                            <span class="fw-bold">$0.00</span>
-                        </div>
-
-                        <hr>
-
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="h6">Total</span>
-                            <span class="h5 fw-bold">${{ "%.2f"|format(total) }}</span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="promoCode" class="form-label">Promo Code</label>
+                        <!-- Promo Code -->
+                        <div class="mt-4">
+                            <label for="promoCode" class="form-label fw-semibold">Promo Code</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="promoCode" placeholder="Enter code">
                                 <button class="btn btn-outline-dark" type="button">Apply</button>
                             </div>
                         </div>
 
-                        <a href="{{ url_for('checkout') }}" class="btn btn-dark btn-lg w-100 mb-3">Proceed to Checkout</a>
-                        <a href="{{ url_for('products') }}" class="btn btn-outline-dark w-100">Continue Shopping</a>
+                        <hr class="my-4">
 
-                        <div class="mt-4">
-                            <p class="text-muted small mb-2">We accept:</p>
-                            <div class="payment-icons">
-                                <i class="fas fa-mobile-alt fa-2x me-2"></i>
-                                <span class="fw-bold">Ecocash</span>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="h5 fw-bold">Total</span>
+                            <span class="h4 fw-bold text-primary">${{ "%.2f"|format(total) }}</span>
+                        </div>
+
+                        <!-- Payment Methods -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Payment Method</label>
+                            
+                            <div class="payment-method-card selected mb-2">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://t3n9sm.c2.acecdn.net/wp-content/uploads/ecocash-logo1.png" alt="Ecocash" style="height: 36px; width: auto;" class="me-3">
+                                    <div>
+                                        <span class="fw-bold">Ecocash</span>
+                                        <p class="text-muted small mb-0">Pay with your mobile wallet</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method-card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fab fa-cc-visa fa-2x text-primary me-3"></i>
+                                    <div>
+                                        <span class="fw-bold">Credit/Debit Card</span>
+                                        <p class="text-muted small mb-0">Visa, Mastercard, Amex</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <a href="{{ url_for('checkout') }}" class="btn btn-dark btn-lg w-100 mb-3">
+                            <i class="fas fa-lock me-2"></i>Proceed to Checkout
+                        </a>
+                        
+                        <p class="text-center text-muted small mb-0">
+                            <i class="fas fa-shield-alt me-1"></i>Secure checkout guaranteed
+                        </p>
                     </div>
                 </div>
             </div>
@@ -118,16 +274,67 @@
         <div class="row">
             <div class="col-12 text-center py-5">
                 <div class="mb-4">
-                    <i class="fas fa-shopping-bag fa-4x text-muted"></i>
+                    <i class="fas fa-shopping-bag empty-cart-icon"></i>
                 </div>
-                <h3 class="mb-3">Your cart is empty</h3>
-                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
-                <a href="{{ url_for('products') }}" class="btn btn-dark btn-lg">Start Shopping</a>
+                <h3 class="mb-3 fw-bold" style="font-family: 'Playfair Display', serif;">Your cart is empty</h3>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.<br>Start shopping to fill it up!</p>
+                <a href="{{ url_for('products') }}" class="btn btn-dark btn-lg">
+                    <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                </a>
             </div>
         </div>
         {% endif %}
     </div>
 </section>
+
+<!-- Recommended Section -->
+{% if cart_items %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold" style="font-family: 'Playfair Display', serif;">You might also like</h4>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=300" class="card-img-top" alt="Accessory" onerror="this.src='https://via.placeholder.com/300x200?text=Silk+Scarf'">
+                    <div class="card-body text-center">
+                        <h6 class="mb-1">Silk Scarf</h6>
+                        <p class="text-primary fw-bold">$45.00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300" class="card-img-top" alt="Watch" onerror="this.src='https://via.placeholder.com/300x200?text=Classic+Watch'">
+                    <div class="card-body text-center">
+                        <h6 class="mb-1">Classic Watch</h6>
+                        <p class="text-primary fw-bold">$199.00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300" class="card-img-top" alt="Sunglasses" onerror="this.src='https://via.placeholder.com/300x200?text=Sunglasses'">
+                    <div class="card-body text-center">
+                        <h6 class="mb-1">Sunglasses</h6>
+                        <p class="text-primary fw-bold">$89.00</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=300" class="card-img-top" alt="Belt" onerror="this.src='https://via.placeholder.com/300x200?text=Leather+Belt'">
+                    <div class="card-body text-center">
+                        <h6 class="mb-1">Leather Belt</h6>
+                        <p class="text-primary fw-bold">$65.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}

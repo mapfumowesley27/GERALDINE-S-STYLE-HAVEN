@@ -24,6 +24,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/images'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+# Allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 # CSRF token generation and validation
 def generate_csrf_token():
@@ -51,6 +57,8 @@ class Product(db.Model):
     image = db.Column(db.String(200))
     sizes = db.Column(db.String(200))
     colors = db.Column(db.String(200))
+    quantity = db.Column(db.Integer, default=0)
+    in_stock = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def get_sizes_list(self):
@@ -159,7 +167,15 @@ def add_to_cart():
     quantity = int(data.get('quantity', 1))
     size = data.get('size', '')
     color = data.get('color', '')
-
+    
+    # Check if product exists and is in stock
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({'success': False, 'message': 'Product not found'}), 404
+    
+    if not product.in_stock:
+        return jsonify({'success': False, 'message': 'Product out of stock'}), 400
+    
     cart = session.get('cart', [])
 
     # Check if product already in cart
@@ -348,6 +364,162 @@ def payment_complete(order_reference):
     
     return render_template('order_confirmation.html', order=order)
 
+# Admin Routes
+@app.route('/admin')
+def admin():
+    search_query = request.args.get('search', '')
+    if search_query:
+        products = Product.query.filter(
+            (Product.name.ilike(f'%{search_query}%')) |
+            (Product.category.ilike(f'%{search_query}%')) |
+            (Product.description.ilike(f'%{search_query}%'))
+        ).all()
+    else:
+        products = Product.query.all()
+    
+    # Process products to handle None values for in_stock and quantity
+    processed_products = []
+    in_stock_count = 0
+    out_of_stock_count = 0
+    total_value = 0
+    
+    for p in products:
+        # Get in_stock with default True if None
+        in_stock = getattr(p, 'in_stock', True)
+        if in_stock is None:
+            in_stock = True
+        
+        # Get quantity with default 0 if None
+        quantity = getattr(p, 'quantity', 0)
+        if quantity is None:
+            quantity = 0
+        
+        # Create a dict with safe values
+        processed_products.append({
+            'id': p.id,
+            'name': p.name,
+            'price': p.price,
+            'category': p.category,
+            'image': p.image,
+            'in_stock': in_stock,
+            'quantity': quantity
+        })
+        
+        # Update counts
+        if in_stock:
+            in_stock_count += 1
+        else:
+            out_of_stock_count += 1
+        total_value += p.price
+    
+    return render_template('admin.html', products=processed_products, search_query=search_query, 
+                          in_stock_count=in_stock_count, out_of_stock_count=out_of_stock_count,
+                          total_value=total_value)
+
+@app.route('/admin/add-product', methods=['GET', 'POST'])
+def add_product():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        price = float(request.form.get('price'))
+        description = request.form.get('description')
+        category = request.form.get('category')
+        sizes = request.form.get('sizes')
+        colors = request.form.get('colors')
+        quantity = int(request.form.get('quantity', 0))
+        in_stock = 'in_stock' in request.form
+        
+        # Handle image upload
+        image = request.form.get('image_url')  # URL as fallback
+        if 'image_file' in request.files:
+            file = request.files['image_file']
+            if file and file.filename and allowed_file(file.filename):
+                # Create unique filename
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{uuid.uuid4().hex}.{ext}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                
+                # Ensure directory exists
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                
+                file.save(filepath)
+                image = f"images/{filename}"
+        
+        product = Product(
+            name=name,
+            price=price,
+            description=description,
+            category=category,
+            image=image,
+            sizes=sizes,
+            colors=colors,
+            quantity=quantity,
+            in_stock=in_stock
+        )
+        db.session.add(product)
+        db.session.commit()
+        
+        flash('Product added successfully!', 'success')
+        return redirect(url_for('admin'))
+    
+    return render_template('admin_add_product.html')
+
+@app.route('/admin/edit-product/<int:product_id>', methods=['GET', 'POST'])
+def edit_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    
+    if request.method == 'POST':
+        product.name = request.form.get('name')
+        product.price = float(request.form.get('price'))
+        product.description = request.form.get('description')
+        product.category = request.form.get('category')
+        product.sizes = request.form.get('sizes')
+        product.colors = request.form.get('colors')
+        product.quantity = int(request.form.get('quantity', 0))
+        product.in_stock = 'in_stock' in request.form
+        
+        # Handle image upload
+        if 'image_file' in request.files:
+            file = request.files['image_file']
+            if file and file.filename and allowed_file(file.filename):
+                # Create unique filename
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{uuid.uuid4().hex}.{ext}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                
+                # Ensure directory exists
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                
+                file.save(filepath)
+                product.image = f"images/{filename}"
+        elif request.form.get('image_url'):
+            product.image = request.form.get('image_url')
+        
+        db.session.commit()
+        
+        flash('Product updated successfully!', 'success')
+        return redirect(url_for('admin'))
+    
+    return render_template('admin_edit_product.html', product=product)
+
+@app.route('/admin/delete-product/<int:product_id>')
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    
+    flash('Product deleted successfully!', 'success')
+    return redirect(url_for('admin'))
+
+@app.route('/admin/toggle-stock/<int:product_id>')
+def toggle_stock(product_id):
+    product = Product.query.get_or_404(product_id)
+    product.in_stock = not product.in_stock
+    db.session.commit()
+    
+    status = 'in stock' if product.in_stock else 'out of stock'
+    flash(f'Product marked as {status}!', 'success')
+    return redirect(url_for('admin'))
+
 
 @app.route('/init-db')
 def init_db():
@@ -391,7 +563,9 @@ def init_db():
             category="Women",
             image="products/silk-blouse.jpg",
             sizes="XS,S,M,L,XL",
-            colors="White,Black,Blush"
+            colors="White,Black,Blush",
+            quantity=50,
+            in_stock=True
         ),
         Product(
             name="Premium Cotton T-Shirt",
@@ -400,7 +574,9 @@ def init_db():
             category="Men",
             image="products/cotton-tshirt.jpg",
             sizes="S,M,L,XL,XXL",
-            colors="White,Black,Navy,Heather Grey"
+            colors="White,Black,Navy,Heather Grey",
+            quantity=100,
+            in_stock=True
         ),
         Product(
             name="Designer Jeans",
@@ -409,7 +585,9 @@ def init_db():
             category="Women",
             image="products/designer-jeans.jpg",
             sizes="24,25,26,27,28,29,30,31,32",
-            colors="Blue,Black,Washed"
+            colors="Blue,Black,Washed",
+            quantity=30,
+            in_stock=True
         ),
         Product(
             name="Leather Jacket",
@@ -418,7 +596,9 @@ def init_db():
             category="Men",
             image="products/leather-jacket.jpg",
             sizes="S,M,L,XL",
-            colors="Black,Brown"
+            colors="Black,Brown",
+            quantity=15,
+            in_stock=True
         ),
         Product(
             name="Summer Dress",
@@ -427,7 +607,9 @@ def init_db():
             category="Women",
             image="products/summer-dress.jpg",
             sizes="XS,S,M,L",
-            colors="Floral Print,Navy,Red"
+            colors="Floral Print,Navy,Red",
+            quantity=40,
+            in_stock=True
         ),
         Product(
             name="Wool Sweater",
@@ -436,7 +618,31 @@ def init_db():
             category="Unisex",
             image="products/wool-sweater.jpg",
             sizes="S,M,L,XL",
-            colors="Cream,Grey,Burgundy"
+            colors="Cream,Grey,Burgundy",
+            quantity=25,
+            in_stock=True
+        ),
+        Product(
+            name="Chanel No. 5 Perfume",
+            price=150.00,
+            description="The iconic floral fragrance that has been a symbol of elegance for decades.",
+            category="Perfumes",
+            image="products/chanel-perfume.jpg",
+            sizes="",
+            colors="",
+            quantity=20,
+            in_stock=True
+        ),
+        Product(
+            name="Dior Sauvage",
+            price=120.00,
+            description="Bold and fresh masculine fragrance with bergamot and pepper.",
+            category="Perfumes",
+            image="products/dior-perfume.jpg",
+            sizes="",
+            colors="",
+            quantity=20,
+            in_stock=True
         )
     ]
 
@@ -484,7 +690,9 @@ def init_database():
                 category="Women",
                 image="products/silk-blouse.jpg",
                 sizes="XS,S,M,L,XL",
-                colors="White,Black,Blush"
+                colors="White,Black,Blush",
+                quantity=50,
+                in_stock=True
             ),
             Product(
                 name="Premium Cotton T-Shirt",
@@ -493,7 +701,9 @@ def init_database():
                 category="Men",
                 image="products/cotton-tshirt.jpg",
                 sizes="S,M,L,XL,XXL",
-                colors="White,Black,Navy,Heather Grey"
+                colors="White,Black,Navy,Heather Grey",
+                quantity=100,
+                in_stock=True
             ),
             Product(
                 name="Designer Jeans",
@@ -502,7 +712,9 @@ def init_database():
                 category="Women",
                 image="products/designer-jeans.jpg",
                 sizes="24,25,26,27,28,29,30,31,32",
-                colors="Blue,Black,Washed"
+                colors="Blue,Black,Washed",
+                quantity=30,
+                in_stock=True
             ),
             Product(
                 name="Leather Jacket",
@@ -511,7 +723,9 @@ def init_database():
                 category="Men",
                 image="products/leather-jacket.jpg",
                 sizes="S,M,L,XL",
-                colors="Black,Brown"
+                colors="Black,Brown",
+                quantity=15,
+                in_stock=True
             ),
             Product(
                 name="Summer Dress",
@@ -520,7 +734,9 @@ def init_database():
                 category="Women",
                 image="products/summer-dress.jpg",
                 sizes="XS,S,M,L",
-                colors="Floral Print,Navy,Red"
+                colors="Floral Print,Navy,Red",
+                quantity=40,
+                in_stock=True
             ),
             Product(
                 name="Wool Sweater",
@@ -529,7 +745,31 @@ def init_database():
                 category="Unisex",
                 image="products/wool-sweater.jpg",
                 sizes="S,M,L,XL",
-                colors="Cream,Grey,Burgundy"
+                colors="Cream,Grey,Burgundy",
+                quantity=25,
+                in_stock=True
+            ),
+            Product(
+                name="Chanel No. 5 Perfume",
+                price=150.00,
+                description="The iconic floral fragrance that has been a symbol of elegance for decades.",
+                category="Perfumes",
+                image="products/chanel-perfume.jpg",
+                sizes="",
+                colors="",
+                quantity=20,
+                in_stock=True
+            ),
+            Product(
+                name="Dior Sauvage",
+                price=120.00,
+                description="Bold and fresh masculine fragrance with bergamot and pepper.",
+                category="Perfumes",
+                image="products/dior-perfume.jpg",
+                sizes="",
+                colors="",
+                quantity=20,
+                in_stock=True
             )
         ]
         for product in products:

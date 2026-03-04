@@ -2,70 +2,256 @@
 
 {% block title %}About Us - Geraldine's Style Haven{% endblock %}
 
+{% block extra_css %}
+<style>
+    .about-hero-section {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+        padding: 100px 0 80px;
+        position: relative;
+        overflow: hidden;
+    }
+    .about-hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/></svg>') repeat;
+        background-size: 200px 200px;
+    }
+    .about-hero-section h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        background: linear-gradient(135deg, #c7a17a 0%, #f5e6d3 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .story-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .story-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .story-card img {
+        height: 350px;
+        object-fit: cover;
+    }
+    .value-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .value-card {
+        border: none;
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    .value-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    .value-card:hover .value-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    .team-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .team-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    .team-card .member-image {
+        height: 300px;
+        overflow: hidden;
+    }
+    .team-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .team-card:hover img {
+        transform: scale(1.1);
+    }
+    .stat-counter {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        font-weight: 700;
+        color: #c7a17a;
+    }
+    .image-overlay {
+        position: relative;
+    }
+    .image-overlay::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.5) 100%);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="page-header">
-    <h1>About Us</h1>
-    <p>Our story of timeless fashion</p>
-</section>
-
-<section class="about-hero">
-    <div class="about-hero-content">
-        <h2>Curating Elegance Since 2015</h2>
-        <p>Geraldine's Style Haven was born from a simple vision: to bring timeless elegance to the modern woman's wardrobe. What started as a small boutique has grown into a destination for discerning fashion lovers seeking quality pieces that transcend seasonal trends.</p>
-    </div>
-</section>
-
-<section class="our-story">
-    <div class="story-grid">
-        <div class="story-image">
-            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600" alt="Our story">
-        </div>
-        <div class="story-content">
-            <h2>Our Story</h2>
-            <p>Founded by Sarah Mitchell, Geraldine's Style Haven represents a commitment to curating the finest fashion pieces from around the world. Each item in our collection is carefully selected for its quality, craftsmanship, and timeless appeal.</p>
-            <p>We believe that true style isn't about following trends—it's about investing in pieces that make you feel confident and elegant for years to come.</p>
-        </div>
-    </div>
-</section>
-
-<section class="team-section">
-    <div class="section-header">
-        <h2>Meet Our Team</h2>
-        <p>The passionate people behind Geraldine's Style Haven</p>
-    </div>
-    <div class="team-grid">
-        {% for owner in owners %}
-        <div class="team-member">
-            <div class="member-image">
-                <img src="{{ url_for('static', filename='images/owners/' + owner.image) }}" alt="{{ owner.name }}">
+<!-- Hero Section -->
+<section class="about-hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-3 fw-bold mb-4">About Us</h1>
+                <p class="lead text-white-50 mb-0">Discover the story behind Geraldine's Style Haven</p>
             </div>
-            <h3>{{ owner.name }}</h3>
-            <span class="role">{{ owner.role }}</span>
-            <p>{{ owner.story }}</p>
         </div>
-        {% endfor %}
     </div>
 </section>
 
-<section class="values-section">
-    <div class="section-header">
-        <h2>Our Values</h2>
+<!-- Story Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="story-card card border-0 shadow">
+                    <div class="image-overlay">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600" alt="Our story" class="card-img-top">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <span class="text-uppercase text-secondary letter-spacing-2 fw-bold">Our Story</span>
+                <h2 class="display-5 fw-bold mb-4" style="font-family: 'Playfair Display', serif;">Curating Elegance Since 2015</h2>
+                <p class="lead text-muted mb-4">Geraldine's Style Haven was born from a simple vision: to bring timeless elegance to the modern woman's wardrobe.</p>
+                <p class="text-muted mb-4">What started as a small boutique has grown into a destination for discerning fashion lovers seeking quality pieces that transcend seasonal trends. We believe that true style isn't about following trends—it's about investing in pieces that make you feel confident and elegant for years to come.</p>
+                <p class="text-muted mb-0">Every piece in our collection is carefully selected for its quality, craftsmanship, and timeless appeal, sourced from artisans and designers who share our commitment to excellence.</p>
+            </div>
+        </div>
     </div>
-    <div class="values-grid">
-        <div class="value-card">
-            <i class="fas fa-gem"></i>
-            <h3>Quality First</h3>
-            <p>We source only the finest materials and work with skilled artisans to create pieces that last.</p>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="stat-counter" data-count="10">10</div>
+                <p class="text-muted mb-0">Years of Excellence</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-counter" data-count="5000">5000</div>
+                <p class="text-muted mb-0">Happy Customers</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-counter" data-count="200">200</div>
+                <p class="text-muted mb-0">Designer Brands</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-counter" data-count="50">50</div>
+                <p class="text-muted mb-0">Countries Shipped</p>
+            </div>
         </div>
-        <div class="value-card">
-            <i class="fas fa-heart"></i>
-            <h3>Customer Focus</h3>
-            <p>Your satisfaction is our priority. We're here to help you find the perfect piece.</p>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-uppercase text-secondary letter-spacing-2 fw-bold">Meet the Team</span>
+            <h2 class="display-5 fw-bold mt-2" style="font-family: 'Playfair Display', serif;">The People Behind the Brand</h2>
+            <p class="text-muted lead mx-auto" style="max-width: 600px;">The passionate individuals who make Geraldine's Style Haven special</p>
         </div>
-        <div class="value-card">
-            <i class="fas fa-leaf"></i>
-            <h3>Sustainability</h3>
-            <p>We believe in responsible fashion and work towards sustainable practices.</p>
+        <div class="row g-4 justify-content-center">
+            {% for owner in owners %}
+            <div class="col-md-6 col-lg-4">
+                <div class="team-card card border-0 shadow-sm h-100">
+                    <div class="member-image">
+                        <img src="{{ url_for('static', filename='images/owners/' + owner.image) }}" alt="{{ owner.name }}" onerror="this.src='https://via.placeholder.com/400x300?text=Team+Member'">
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h5 class="fw-bold mb-1">{{ owner.name }}</h5>
+                        <p class="text-secondary mb-3">{{ owner.role }}</p>
+                        <p class="text-muted small mb-3">{{ owner.story[:150] }}...</p>
+                        <div class="social-links">
+                            <a href="#" class="btn btn-sm btn-outline-dark me-1"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="btn btn-sm btn-outline-dark me-1"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="btn btn-sm btn-outline-dark"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-uppercase text-secondary letter-spacing-2 fw-bold">Our Values</span>
+            <h2 class="display-5 fw-bold mt-2" style="font-family: 'Playfair Display', serif;">What We Stand For</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="value-card bg-white text-dark h-100">
+                    <div class="value-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Quality First</h5>
+                    <p class="text-muted mb-0">We source only the finest materials and work with skilled artisans to create pieces that last a lifetime.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="value-card bg-white text-dark h-100">
+                    <div class="value-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Customer Focus</h5>
+                    <p class="text-muted mb-0">Your satisfaction is our priority. We're here to help you find the perfect piece for your unique style.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="value-card bg-white text-dark h-100">
+                    <div class="value-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Sustainability</h5>
+                    <p class="text-muted mb-0">We believe in responsible fashion and work towards sustainable practices throughout our supply chain.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5" style="background: linear-gradient(135deg, #c7a17a 0%, #a6825a 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold text-white mb-2">Ready to Explore Our Collection?</h2>
+                <p class="text-white-50 mb-0">Discover timeless pieces that reflect your unique style</p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <a href="{{ url_for('products') }}" class="btn btn-dark btn-lg">Shop Now</a>
+            </div>
         </div>
     </div>
 </section>
