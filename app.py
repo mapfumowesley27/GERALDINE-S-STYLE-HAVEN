@@ -720,17 +720,17 @@ def init_db():
     # Add sample owners
     owners = [
         Owner(
-            name="Geraldine Smith",
+            name="Mrs Phiri",
             role="Founder & Creative Director",
             bio="With over 15 years in fashion, Geraldine brings her unique vision to every collection.",
             image="owners/geraldine.jpg",
-            story="Geraldine started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
+            story="Mrs Phiri started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
             quote="Fashion is not just about clothes, it's about expressing your true self."
         ),
         Owner(
-            name="Marcus Chen",
+            name="Brenda Phiri",
             role="Co-founder & Operations Manager",
-            bio="Marcus combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
+            bio="Brenda combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
             image="owners/marcus.jpg",
             story="After working in retail management for 10 years, Marcus joined forces with Geraldine to create a shopping experience that combines style with exceptional service.",
             quote="Great style should be accessible to everyone."
@@ -848,17 +848,17 @@ def init_database():
         # Add sample owners
         owners = [
             Owner(
-                name="Geraldine Smith",
+                name="Mrs Phiri",
                 role="Founder & Creative Director",
                 bio="With over 15 years in fashion, Geraldine brings her unique vision to every collection.",
                 image="owners/geraldine.jpg",
-                story="Geraldine started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
+                story="Mrs Phiri started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
                 quote="Fashion is not just about clothes, it's about expressing your true self."
             ),
             Owner(
-                name="Marcus Chen",
+                name="Brenda Phiri",
                 role="Co-founder & Operations Manager",
-                bio="Marcus combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
+                bio="Brenda combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
                 image="owners/marcus.jpg",
                 story="After working in retail management for 10 years, Marcus joined forces with Geraldine to create a shopping experience that combines style with exceptional service.",
                 quote="Great style should be accessible to everyone."
