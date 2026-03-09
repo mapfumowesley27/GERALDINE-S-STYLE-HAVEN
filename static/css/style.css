@@ -338,6 +338,43 @@ footer .form-control:focus {
     100% { transform: rotate(360deg); }
 }
 
+/* Owner/Team Images - About & Stories Pages */
+.owner-img, 
+.story-img,
+.team-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Team member image container */
+.member-image {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.team-card:hover .member-image img {
+    transform: scale(1.1);
+}
+
+/* Story card horizontal images */
+.story-card-horizontal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 300px;
+}
+
 /* Payment Icons */
 .payment-icons {
     font-size: 1.5rem;

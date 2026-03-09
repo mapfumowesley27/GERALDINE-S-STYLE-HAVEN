@@ -23,15 +23,25 @@
         transform: translateY(-5px);
         box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
+    .story-card-horizontal .image-container {
+        height: 400px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .story-card-horizontal img {
-        height: 300px;
-        object-fit: cover;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
     }
     .story-card-horizontal .card-body {
         padding: 2rem;
     }
     .story-card-horizontal:hover img {
-        transform: scale(1.05);
+        transform: scale(1.02);
     }
     .story-card-horizontal img {
         transition: transform 0.5s ease;
@@ -105,11 +115,21 @@
         border-radius: 20px;
         font-weight: 600;
     }
+    @media (max-width: 992px) {
+        .story-card-horizontal .image-container {
+            height: 300px;
+        }
+    }
     @media (max-width: 768px) {
         .stories-hero h1 {
             font-size: 2rem;
         }
-        .story-card-horizontal img {
+        .story-card-horizontal .image-container {
+            height: 250px;
+        }
+    }
+    @media (max-width: 480px) {
+        .story-card-horizontal .image-container {
             height: 200px;
         }
     }
@@ -141,7 +161,9 @@
         <div class="story-card-horizontal card shadow-sm mb-5">
             <div class="row g-0">
                 <div class="col-lg-6">
-                    <img src="{{ url_for('static', filename='images/owners/' + owner.image) }}" class="img-fluid w-100" alt="{{ owner.name }}" onerror="this.src='https://via.placeholder.com/600x400?text=Owner+Story'">
+                    <div class="image-container h-100">
+                        <img src="{{ url_for('static', filename='images/' + owner.image) }}" alt="{{ owner.name }}" onerror="this.src='https://via.placeholder.com/600x400?text=Owner+Story'">
+                    </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="card-body d-flex flex-column justify-content-center h-100">

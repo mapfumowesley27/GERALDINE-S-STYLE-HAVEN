@@ -145,15 +145,38 @@ def index():
 @app.route('/products')
 def products():
     category = request.args.get('category', 'all')
+    max_price = request.args.get('max_price', type=float)
+    size = request.args.get('size', '')
+    sort = request.args.get('sort', 'featured')
+    
+    # Base query
+    query = Product.query
+    
+    # Category filter
     if category and category != 'all':
-        products = Product.query.filter_by(category=category).all()
-    else:
-        products = Product.query.all()
+        query = query.filter_by(category=category)
+    
+    products = query.all()
+    
+    # Price filter
+    if max_price:
+        products = [p for p in products if p.price <= max_price]
+    
+    # Size filter - use exact match to avoid false positives (e.g., "S" matching "XS")
+    if size:
+        products = [p for p in products if p.sizes and size in [s.strip() for s in p.sizes.split(',')]]
+    
+    # Sort
+    if sort == 'price_low':
+        products = sorted(products, key=lambda x: x.price)
+    elif sort == 'price_high':
+        products = sorted(products, key=lambda x: x.price, reverse=True)
+    # 'featured' and 'newest' keep original order
 
     categories = db.session.query(Product.category).distinct().all()
     categories = [c[0] for c in categories]
 
-    return render_template('products.html', products=products, categories=categories, current_category=category)
+    return render_template('products.html', products=products, categories=categories, current_category=category, max_price=max_price)
 
 
 @app.route('/product/<int:product_id>')
@@ -723,7 +746,7 @@ def init_db():
             name="Mrs Phiri",
             role="Founder & Creative Director",
             bio="With over 15 years in fashion, Geraldine brings her unique vision to every collection.",
-            image="owners/geraldine.jpg",
+            image="owners/IMG_1201.jpg",
             story="Mrs Phiri started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
             quote="Fashion is not just about clothes, it's about expressing your true self."
         ),
@@ -731,7 +754,7 @@ def init_db():
             name="Brenda Phiri",
             role="Co-founder & Operations Manager",
             bio="Brenda combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
-            image="owners/marcus.jpg",
+            image="owners/IMG_1192.jpg",
             story="After working in retail management for 10 years, Marcus joined forces with Geraldine to create a shopping experience that combines style with exceptional service.",
             quote="Great style should be accessible to everyone."
         )
@@ -843,6 +866,15 @@ def init_database():
     """Initialize database with tables and sample data"""
     db.create_all()
     
+    # Update existing owner records with correct image paths if needed
+    owners = Owner.query.all()
+    for owner in owners:
+        if owner.name == "Mrs Phiri" and "geraldine" in (owner.image or "").lower():
+            owner.image = "owners/IMG_1201.jpg"
+        elif owner.name == "Brenda Phiri" and "marcus" in (owner.image or "").lower():
+            owner.image = "owners/IMG_1192.jpg"
+    db.session.commit()
+    
     # Check if data already exists
     if not Product.query.first():
         # Add sample owners
@@ -851,7 +883,7 @@ def init_database():
                 name="Mrs Phiri",
                 role="Founder & Creative Director",
                 bio="With over 15 years in fashion, Geraldine brings her unique vision to every collection.",
-                image="owners/geraldine.jpg",
+                image="owners/IMG_1201.jpg",
                 story="Mrs Phiri started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
                 quote="Fashion is not just about clothes, it's about expressing your true self."
             ),
@@ -859,7 +891,7 @@ def init_database():
                 name="Brenda Phiri",
                 role="Co-founder & Operations Manager",
                 bio="Brenda combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
-                image="owners/marcus.jpg",
+                image="owners/IMG_1192.jpg",
                 story="After working in retail management for 10 years, Marcus joined forces with Geraldine to create a shopping experience that combines style with exceptional service.",
                 quote="Great style should be accessible to everyone."
             )
