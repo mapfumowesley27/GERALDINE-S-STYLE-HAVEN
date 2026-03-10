@@ -745,17 +745,17 @@ def init_db():
         Owner(
             name="Mrs Phiri",
             role="Founder & Creative Director",
-            bio="With over 15 years in fashion, Geraldine brings her unique vision to every collection.",
+            bio="With over 15 years in fashion, Mrs Phiri brings her unique vision to every collection.",
             image="owners/IMG_1201.jpg",
-            story="Mrs Phiri started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
+            story="Mrs Phiri started her journey in fashion working as a stylist in Norton before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
             quote="Fashion is not just about clothes, it's about expressing your true self."
         ),
         Owner(
             name="Brenda Phiri",
             role="Co-founder & Operations Manager",
-            bio="Brenda combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
+            bio="Brenda combines her business acumen with a love for fashion to ensure every customer has an amazing experience.",
             image="owners/IMG_1192.jpg",
-            story="After working in retail management for 10 years, Marcus joined forces with Geraldine to create a shopping experience that combines style with exceptional service.",
+            story="After working in retail management for 10 years, Brenda joined forces with Mrs Phiri to create a shopping experience that combines style with exceptional service.",
             quote="Great style should be accessible to everyone."
         )
     ]
@@ -882,17 +882,17 @@ def init_database():
             Owner(
                 name="Mrs Phiri",
                 role="Founder & Creative Director",
-                bio="With over 15 years in fashion, Geraldine brings her unique vision to every collection.",
+                bio="With over 15 years in fashion, Mrs Phiri brings her unique vision to every collection.",
                 image="owners/IMG_1201.jpg",
-                story="Mrs Phiri started her journey in fashion working as a stylist in New York before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
+                story="Mrs Phiri started her journey in fashion working as a stylist in Maridale before realizing her dream of opening her own boutique. Her passion for sustainable fashion and unique designs led to the creation of Geraldine's Style Haven.",
                 quote="Fashion is not just about clothes, it's about expressing your true self."
             ),
             Owner(
                 name="Brenda Phiri",
                 role="Co-founder & Operations Manager",
-                bio="Brenda combines his business acumen with a love for fashion to ensure every customer has an amazing experience.",
+                bio="Brenda combines her business acumen with a love for fashion to ensure every customer has an amazing experience.",
                 image="owners/IMG_1192.jpg",
-                story="After working in retail management for 10 years, Marcus joined forces with Geraldine to create a shopping experience that combines style with exceptional service.",
+                story="After working in retail management for 10 years, Brenda joined forces with Mrs Phiri to create a shopping experience that combines style with exceptional service.",
                 quote="Great style should be accessible to everyone."
             )
         ]
@@ -910,8 +910,7 @@ def init_database():
                 sizes="XS,S,M,L,XL",
                 colors="White,Black,Blush",
                 quantity=50,
-                in_stock=True
-            ),
+                in_stock=True       ),
             Product(
                 name="Premium Cotton T-Shirt",
                 price=29.99,
